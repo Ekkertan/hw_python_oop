@@ -12,11 +12,11 @@ class InfoMessage:
     speed: float
     calories: float
 
-    MESSAGE_TEMPLATE = ('Тип тренировки: {training_type}; '
-                        'Длительность: {duration:.3f} ч.; '
-                        'Дистанция: {distance:.3f} км; '
-                        'Ср. скорость: {speed:.3f} км/ч; '
-                        'Потрачено ккал: {calories:.3f}.')
+    MESSAGE_TEMPLATE: str = ('Тип тренировки: {training_type}; '
+                             'Длительность: {duration:.3f} ч.; '
+                             'Дистанция: {distance:.3f} км; '
+                             'Ср. скорость: {speed:.3f} км/ч; '
+                             'Потрачено ккал: {calories:.3f}.')
 
     def get_message(self) -> str:
         """Возвращает информационное сообщение о тренировке."""
@@ -73,7 +73,9 @@ class Running(Training):
     coeff_cal_2: float = 20.0
 
     def get_spent_calories(self) -> float:
-        """Получить количество затраченных калорий. Рассчитывается по формуле
+        """Получить количество затраченных калорий.
+
+        Рассчитывается по формуле:
         (18 * mean_speed - 20) * weight / M_IN_KM * duration_in_minutes.
         """
         mean_speed = self.get_mean_speed()
@@ -98,7 +100,9 @@ class SportsWalking(Training):
         self.height = height
 
     def get_spent_calories(self) -> float:
-        """Получить количество затраченных калорий. Рассчитывается по формуле
+        """Получить количество затраченных калорий.
+
+        Рассчитывается по формуле:
         (0.035 * weight + (mean_speed**2 // height) * 0.029 * вес) * duration.
         """
         minutes = self.duration * self.MIN_IN_HOUR
@@ -112,6 +116,7 @@ class SportsWalking(Training):
 
 class Swimming(Training):
     """Тренировка: плавание."""
+
     LEN_STEP: float = 1.38
     ADD_COEFF: float = 1.1
     SPEED_COEFF: float = 2.0
@@ -132,7 +137,9 @@ class Swimming(Training):
         return total_length / self.M_IN_KM / self.duration
 
     def get_spent_calories(self) -> float:
-        """Получить количество затраченных калорий. Рассчитывается по формуле
+        """Получить количество затраченных калорий.
+
+        Рассчитывается по формуле:
         (mean_speed + 1.1) * 2 * weight.
         """
         mean_speed = self.get_mean_speed()
