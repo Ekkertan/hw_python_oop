@@ -1,5 +1,5 @@
 from dataclasses import dataclass, asdict
-from typing import Dict, Type
+from typing import Dict, Type, ClassVar, List, Union
 
 
 @dataclass
@@ -12,11 +12,11 @@ class InfoMessage:
     speed: float
     calories: float
 
-    MESSAGE_TEMPLATE: str = ('Тип тренировки: {training_type}; '
-                             'Длительность: {duration:.3f} ч.; '
-                             'Дистанция: {distance:.3f} км; '
-                             'Ср. скорость: {speed:.3f} км/ч; '
-                             'Потрачено ккал: {calories:.3f}.')
+    MESSAGE_TEMPLATE: ClassVar[str] = ('Тип тренировки: {training_type}; '
+                                       'Длительность: {duration:.3f} ч.; '
+                                       'Дистанция: {distance:.3f} км; '
+                                       'Ср. скорость: {speed:.3f} км/ч; '
+                                       'Потрачено ккал: {calories:.3f}.')
 
     def get_message(self) -> str:
         """Возвращает информационное сообщение о тренировке."""
@@ -146,7 +146,7 @@ class Swimming(Training):
         return (mean_speed + self.ADD_COEFF) * self.SPEED_COEFF * self.weight
 
 
-def read_package(workout_type: str, data: list) -> Training:
+def read_package(workout_type: str, data: List[Union[int, float]]) -> Training:
     """Прочитать данные полученные от датчиков."""
     traning_classes_map: Dict[str, Type[Training]] = {
         'SWM': Swimming,
@@ -154,7 +154,10 @@ def read_package(workout_type: str, data: list) -> Training:
         'WLK': SportsWalking
     }
 
-    traning_class = traning_classes_map[workout_type]
+    try:
+        traning_class = traning_classes_map[workout_type]
+    except KeyError:
+        raise ValueError(f'Получен неверный тип тренировки {workout_type}!')
     return traning_class(*data)
 
 
@@ -170,6 +173,7 @@ if __name__ == '__main__':
         ('SWM', [720, 1, 80, 25, 40]),
         ('RUN', [15000, 1, 75]),
         ('WLK', [9000, 1, 75, 180]),
+        ('TEST', ())
     ]
 
     for workout_type, data in packages:
