@@ -50,11 +50,17 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        raise NotImplementedError
+        raise NotImplementedError(
+            f'Метод get_spent_calories в классе {self.class_name} '
+            f'необходимо реализовать!')
+
+    @property
+    def class_name(self):
+        return self.__class__.__name__
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
-        training_type = self.__class__.__name__
+        training_type = self.class_name
         duration = self.duration
         distance = self.get_distance()
         speed = self.get_mean_speed()
@@ -154,11 +160,7 @@ def read_package(workout_type: str, data: List[Union[int, float]]) -> Training:
         'WLK': SportsWalking
     }
 
-    try:
-        traning_class = traning_classes_map[workout_type]
-    except KeyError:
-        raise ValueError(f'Получен неверный тип тренировки {workout_type}!')
-    return traning_class(*data)
+    return traning_classes_map[workout_type](*data)
 
 
 def main(training: Training) -> None:
@@ -172,10 +174,14 @@ if __name__ == '__main__':
     packages = [
         ('SWM', [720, 1, 80, 25, 40]),
         ('RUN', [15000, 1, 75]),
+        ('TEST', ()),
         ('WLK', [9000, 1, 75, 180]),
-        ('TEST', ())
     ]
 
     for workout_type, data in packages:
-        training = read_package(workout_type, data)
-        main(training)
+        try:
+            training = read_package(workout_type, data)
+        except KeyError:
+            print(f'Получен неверный тип тренировки {workout_type}!')
+        else:
+            main(training)
